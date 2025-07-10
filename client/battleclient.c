@@ -48,6 +48,53 @@ int main() {
                 cont++;
             }
         }
+        // Recebe mensagem de navios posicionados
+        memset(buffer, 0, sizeof(buffer));
+        recv(sock, buffer, MAX_MSG, 0);
+        printf("%s\n\n", buffer);
+
+        // Recebe mensagem pedindo para usuário digitar READY
+        memset(buffer, 0, sizeof(buffer));
+        recv(sock, buffer, MAX_MSG, 0);
+        printf("%s\n", buffer);
+        memset(comando, 0, sizeof(comando));
+        fgets(comando, sizeof(comando), stdin);
+        comando[strcspn(comando, "\n")] = 0;
+        send(sock, comando, strlen(comando), 0);
+
+        // Recebe mensagem de que todos os usuários estão prontos
+        memset(buffer, 0, sizeof(buffer));
+        recv(sock, buffer, MAX_MSG, 0);
+        printf("%s\n", buffer);
+
+        // Loop do Jogo
+        while(1){
+            memset(buffer, 0, sizeof(buffer));
+            recv(sock, buffer, MAX_MSG, 0);
+            printf("\n%s\n", buffer);
+            
+            if(strncmp(buffer, CMD_WIN, strlen(CMD_WIN)) == 0 || strncmp(buffer, CMD_LOSE, strlen(CMD_LOSE)) == 0){
+                break;
+            }
+            if(strstr(buffer, "Seu turno!") == NULL){
+                memset(buffer, 0, sizeof(buffer));
+                recv(sock, buffer, MAX_MSG, 0);
+                printf("%s\n\n", buffer);
+                continue;
+            }
+
+            memset(comando, 0, sizeof(comando));
+            fgets(comando, sizeof(comando), stdin);
+            comando[strcspn(comando, "\n")] = 0;
+            send(sock, comando, strlen(comando), 0);
+            memset(buffer, 0, sizeof(buffer));
+            recv(sock, buffer, MAX_MSG, 0);
+            printf("%s\n\n", buffer);
+        }
+
+        memset(buffer, 0, sizeof(buffer));
+        recv(sock, buffer, MAX_MSG, 0);
+        printf("%s\n", buffer);
 
         close(sock);
         return 0;
