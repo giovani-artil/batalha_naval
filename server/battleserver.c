@@ -98,12 +98,14 @@ int posicionaNavio(InfoJogador* j, int x, int y, char tipo[MAX_MSG], char orient
             }
             for(int i = 0; i < tam; i++){
                 if(tam == 2){
-                    if(j->coordFrag1[0] == -1){
+                    if(j->coordFrag1[2*i] == -1){
                         j->coordFrag1[2*i] = x;
                         j->coordFrag1[2*i + 1] = y + i;
+                        printf("Fragata 1 do Jogador %d: x: %d, y: %d\n", j->id + 1, j->coordFrag1[2*i], j->coordFrag1[2*i + 1]);
                     }else{
                         j->coordFrag2[2*i] = x;
                         j->coordFrag2[2*i + 1] = y + i;
+                        printf("Fragata 2 do Jogador %d: x: %d, y: %d\n", j->id + 1, j->coordFrag2[2*i], j->coordFrag2[2*i + 1]);
                     }
                 }else if(tam == 3){
                     j->coordDestr[2*i] = x;
@@ -118,12 +120,14 @@ int posicionaNavio(InfoJogador* j, int x, int y, char tipo[MAX_MSG], char orient
             }
             for(int i = 0; i < tam; i++){
                 if(tam == 2){
-                    if(j->coordFrag1[0] == -1){
+                    if(j->coordFrag1[2*i] == -1){
                         j->coordFrag1[2*i] = x;
                         j->coordFrag1[2*i + 1] = y - i;
+                        printf("Fragata 1 do Jogador %d: x: %d, y: %d\n", j->id + 1, j->coordFrag1[2*i], j->coordFrag1[2*i + 1]);
                     }else{
                         j->coordFrag2[2*i] = x;
                         j->coordFrag2[2*i + 1] = y - i;
+                        printf("Fragata 2 do Jogador %d: x: %d, y: %d\n", j->id + 1, j->coordFrag2[2*i], j->coordFrag2[2*i + 1]);
                     }
                 }else if(tam == 3){
                     j->coordDestr[2*i] = x;
@@ -142,12 +146,14 @@ int posicionaNavio(InfoJogador* j, int x, int y, char tipo[MAX_MSG], char orient
             }
             for(int i = 0; i < tam; i++){
                 if(tam == 2){
-                    if(j->coordFrag1[0] == -1){
+                    if(j->coordFrag1[2*i] == -1){
                         j->coordFrag1[2*i] = x + i;
                         j->coordFrag1[2*i + 1] = y;
+                        printf("Fragata 1 do Jogador %d: x: %d, y: %d\n", j->id + 1, j->coordFrag1[2*i], j->coordFrag1[2*i + 1]);
                     }else{
                         j->coordFrag2[2*i] = x + i;
                         j->coordFrag2[2*i + 1] = y;
+                        printf("Fragata 2 do Jogador %d: x: %d, y: %d\n", j->id + 1, j->coordFrag2[2*i], j->coordFrag2[2*i + 1]);
                     }
                 }else if(tam == 3){
                     j->coordDestr[2*i] = x + i;
@@ -162,12 +168,14 @@ int posicionaNavio(InfoJogador* j, int x, int y, char tipo[MAX_MSG], char orient
             }
             for(int i = 0; i < tam; i++){
                 if(tam == 2){
-                    if(j->coordFrag1[0] == -1){
+                    if(j->coordFrag1[2*i] == -1){
                         j->coordFrag1[2*i] = x - i;
                         j->coordFrag1[2*i + 1] = y;
+                        printf("Fragata 1 do Jogador %d: x: %d, y: %d\n", j->id + 1, j->coordFrag1[2*i], j->coordFrag1[2*i + 1]);
                     }else{
                         j->coordFrag2[2*i] = x - i;
                         j->coordFrag2[2*i + 1] = y;
+                        printf("Fragata 2 do Jogador %d: x: %d, y: %d\n", j->id + 1, j->coordFrag2[2*i], j->coordFrag2[2*i + 1]);
                     }
                 }else if(tam == 3){
                     j->coordDestr[2*i] = x - i;
@@ -188,7 +196,7 @@ int posicionaNavio(InfoJogador* j, int x, int y, char tipo[MAX_MSG], char orient
 void* posicionaNavios(void* arg){
     InfoJogador* jogador = (InfoJogador*)arg;
     jogador->coordFrag1[0] = -1;
-    jogador->coordFrag2[0] = -1;
+    jogador->coordFrag1[2] = -1;
     int x, y, s = 1, f = 2, d = 1;
     char comando[MAX_MSG], tipo[MAX_MSG], orientacao, direcao;
     
@@ -376,6 +384,8 @@ void* inicioJogo(void* arg){
                         pthread_cond_broadcast(&condTurno);
                     }else{
                         send(jogador->sock, "Jogada Invalida! Digite outra coordenada.", 42, 0);
+                        send(adversario->sock, "Jogada Invalida! O adversario tentou uma jogada invalida.", 58, 0);
+                        printf("JOGADOR: %d\tJOGADA: %d %d\n", jogador->id, x, y);
                         pthread_mutex_unlock(&mutex);
                         continue; 
                     }
@@ -454,6 +464,7 @@ int main() {
 
     send(jogadores[0].sock, "FIM", 3, 0);
     send(jogadores[1].sock, "FIM", 3, 0);
+    printf("FIM DE JOGO\n");
 
     close(server_fd);
     return 0;
