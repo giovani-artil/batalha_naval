@@ -385,7 +385,7 @@ void* inicioJogo(void* arg){
                     }else{
                         send(jogador->sock, "Jogada Invalida! Digite outra coordenada.", 42, 0);
                         send(adversario->sock, "Jogada Invalida! O adversario tentou uma jogada invalida.", 58, 0);
-                        printf("JOGADOR: %d\tJOGADA: %d %d\n", jogador->id, x, y);
+                        printf("JOGADOR: %d\tJOGADA: %d %d\n", jogador->id + 1, x, y);
                         pthread_mutex_unlock(&mutex);
                         continue; 
                     }
